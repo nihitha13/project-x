@@ -3,7 +3,6 @@
     flex-direction: row-reverse;
     justify-content: flex-start;
     align-items: flex-start;
-    height: 10em;
 }
 .lp-header svg{
     font-size: 3em;
@@ -13,6 +12,7 @@
 }
 .lp-sos button{
     font-size: 7em;
+    border-radius: 75%;
 }
 .lp-sec{
     font-size: 3em;
