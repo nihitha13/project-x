@@ -64,7 +64,7 @@ user.save((err, result) => {
     console.log(result)
     if (err) {
         console.log(err);
-        res.status(500).send(err);
+        // res.status(500).send(err);
     }
     else {
         console.log('success')
