@@ -1,0 +1,22 @@
+.lp-header{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 10em;
+}
+.lp-header svg{
+    font-size: 3em;
+}
+.lp-header{
+    height: 20em;
+}
+.lp-sos button{
+    font-size: 7em;
+}
+.lp-sec{
+    font-size: 3em;
+    display: flex;
+    flex-direction: row-reverse;
+    padding-top: 3em;
+}
