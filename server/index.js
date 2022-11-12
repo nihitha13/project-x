@@ -17,59 +17,126 @@ app.use(function (req, res, next) {
 }
 );
 
+const dotenv = require('dotenv');
+dotenv.config();
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://projectx:1234@projectx.n53lkfe.mongodb.net/?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-// client.connect(err => {
-//   const collection = client.db("projectx").collection("users");
-//   // perform actions on the collection object
-//   client.close();
-// });
 
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var SchemaTypes = mongoose.SchemaTypes;
 
 try {
     // Connect to the MongoDB cluster
      mongoose.connect(
       uri,
       { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 },
-      () => console.log(" Mongoose is connected")
+      () => console.log("Mongoose is connected")
     );
 
   } catch (e) {
     console.log("could not connect");
   }
 
-// mongoose.connect("mongodb://localhost/wannabe", function (err) {
-//     if (err) throw err;
-//     console.log('connected to db');
-// });
-
 con = mongoose.connection;
 
 var UserSchema = new Schema({
     email: { type: String },
-    username: { type: String }
+    username: { type: String },
+    org: { type: SchemaTypes.ObjectId, ref: "organizations" }
 })
 
-var UserModel = mongoose.model('user', UserSchema);
-
-var user = new UserModel({
-    email: "abc@vt.edu",
-    username: "John"
+var OrgSchema = new Schema({
+    name: { type: String },
+    email: { type: String },
+    active: { type: Boolean }
 })
-user.save((err, result) => {
-    console.log(result)
-    if (err) {
-        console.log(err);
-        // res.status(500).send(err);
-    }
-    else {
-        console.log('success')
-    }
+
+var GroupSchema = new Schema({
+    user_id: { type: SchemaTypes.ObjectId, ref: "users" },
+    group_name: { type: String },
+    active: { type: Boolean }
+})
+
+var ContactSchema = new Schema({
+    group_id: { type: SchemaTypes.ObjectId, ref: "groups"},
+    name: { type: String },
+    phonenum: {type: String},
+    email: { type: String }
 });
+
+var UserModel = mongoose.model('users', UserSchema);
+var OrgModel = mongoose.model('organizations', OrgSchema);
+var GroupModel = mongoose.model('groups', GroupSchema);
+var ContactModel = mongoose.model('contacts', ContactSchema);
+
+
+
+app.post('/sendsos', async (req, res) => {
+    console.log(req.body);
+    let user_email = req.body.email;
+    if(!user_email){
+        res.status(404).send("")
+    }
+    let user = await UserModel.findOne({email: user_email});
+    let userid = user._id;
+    let orgid = user.org;
+    // console.log(orgid)
+
+    let org = await OrgModel.findById(orgid);
+    console.log(org)
+
+    let groups = await GroupModel.find();
+    console.log(groups)
+    let contact_emails = [];
+    let contact_phones = []
+    for(let i = 0; i < groups.length; i++){
+        let contacts = await ContactModel.find({group_id: groups[i]._id})
+        for(let j = 0; j < contacts.length; j++){
+            contact_emails.push(contacts[j].email);
+            contact_phones.push(contacts[j].phonenum);
+        }
+    }
+
+    console.log(contact_emails)
+    console.log(contact_phones)
+
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+    console.log(accountSid)
+    console.log(authToken)
+
+    const client = require('twilio')(accountSid, authToken);
+
+    client.messages 
+    .create({body: 'Hi there', from: '+14793832726', to: '+15408248711'})
+    .then(message => console.log(message.sid));
+
+//     client.validationRequests
+//   .create({friendlyName: 'My Home Phone Number', phoneNumber: '+15408248709'})
+//   .then(validation_request => console.log(validation_request.friendlyName));
+
+    res.status(200).send({});
+});
+
+
+// var user = new UserModel({
+//     email: "abc@vt.edu",
+//     username: "John",
+//     org: ""
+// })
+// user.save((err, result) => {
+//     console.log(result)
+//     if (err) {
+//         console.log(err);
+//         // res.status(500).send(err);
+//     }
+//     else {
+//         console.log('success')
+//     }
+// });
 
 
 // app.listen(port, () => console.log(`Listening on port ${port}`));
