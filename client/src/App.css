@@ -32,7 +32,16 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+body {
+  background: linear-gradient(0.39turn, #243a43, #b6bab3, #7f4c13);
+}
+.leaflet-container {
+  width: 100wh; 
+  height: 100vh;
 }
