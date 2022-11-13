@@ -19,6 +19,7 @@ export default function MarkSafeModal(props) {
       "abc@vt.edu",
       selectedOption
     );
+    props.setSos();
     handleClose();
   };
 
@@ -38,7 +39,7 @@ export default function MarkSafeModal(props) {
             onChange={(e) => setSelectedOption(e.target.value)}
           >
             <option>Open this select menu</option>
-            <option value="Assualt">Assualt</option>
+            <option value="Assault">Assault</option>
             <option value="Burglary">Burglary</option>
             <option value="Homicide">Homicide</option>
             <option value="Weapons">Weapons</option>

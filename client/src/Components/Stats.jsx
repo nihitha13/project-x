@@ -28,6 +28,7 @@ export default class Stats extends React.Component {
       assault: [],
       homicide: [],
       weapons: [],
+      countByTypes: [],
     };
     this.getIncidents();
   }
@@ -217,7 +218,7 @@ export default class Stats extends React.Component {
         <Button
           style={{ marginLeft: "20px" }}
           onClick={(e) => this.handleChange(e)}
-          value="Assault"
+          value="Burglary"
         >
           Burglary
         </Button>

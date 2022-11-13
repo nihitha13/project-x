@@ -82,7 +82,9 @@ export const LandingPage = () => {
             Mark Safe{" "}
           </Button>
         </section>
-        {openModal && <MarkSafeModal incident_id={incident_id} />}
+        {openModal && (
+          <MarkSafeModal incident_id={incident_id} setSos={setSos} />
+        )}
       </div>
     </Container>
   );
