@@ -10,7 +10,7 @@ import { sendSOS } from "./Services/SendSOS";
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import MarkSafeModal from "./components/MarkSafeModal";
+import MarkSafeModal from "./Components/MarkSafeModal";
 
 export const LandingPage = () => {
   const [sos, setSos] = useState(false);

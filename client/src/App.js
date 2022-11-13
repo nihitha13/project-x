@@ -1,6 +1,6 @@
 import { LandingPage } from './Landing';
-import { AccountDetails } from './components/AccountDetails';
-import { MapView } from './components/MapView';
+import { AccountDetails } from './Components/AccountDetails';
+import { MapView } from './Components/MapView';
 
 import {
   BrowserRouter as Router,
