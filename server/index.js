@@ -179,13 +179,14 @@ app.post("/marksafe", async (req, res) => {
   console.log(req.body);
 
   let incident_id = req.body.incident_id;
+  let type = req.body.type;
   let email = req.body.email;
   let user = await UserModel.findOne({ email: email });
   let userid = user._id;
   let username = user.username;
 
   const filter = { _id: incident_id };
-  const update = { active: false };
+  const update = { active: false, type: type };
 
   let incident = await IncidentModel.findOneAndUpdate(filter, update);
 
