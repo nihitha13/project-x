@@ -5,6 +5,8 @@ import Col from "react-bootstrap/Col";
 import IconButton from "@mui/material/IconButton";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import InsightsIcon from "@mui/icons-material/Insights";
+import QueryStatsIcon from "@mui/icons-material/QueryStats";
+import MapIcon from "@mui/icons-material/Map";
 import "./Landing.css";
 import { sendSOS } from "./Services/SendSOS";
 
@@ -51,7 +53,12 @@ export const LandingPage = () => {
           </Link>
           <Link to="/map/">
             <IconButton size="lg">
-              <InsightsIcon></InsightsIcon>
+              <MapIcon></MapIcon>
+            </IconButton>
+          </Link>
+          <Link to="/stats/">
+            <IconButton size="lg">
+              <QueryStatsIcon></QueryStatsIcon>
             </IconButton>
           </Link>
         </section>
