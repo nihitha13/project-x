@@ -67,21 +67,45 @@ var ContactSchema = new Schema({
     email: { type: String }
 });
 
+var IncidentSchema = new Schema({
+    user_id: { type: SchemaTypes.ObjectId, ref: "users" },
+    active: { type: Boolean },
+    location: {
+        latitude: { type: String },
+        longitude: { type: String }
+    },
+    timestamp: {type: Date},
+    audio_id : { type: SchemaTypes.ObjectId, ref: "audios" },
+});
+
+
 var UserModel = mongoose.model('users', UserSchema);
 var OrgModel = mongoose.model('organizations', OrgSchema);
 var GroupModel = mongoose.model('groups', GroupSchema);
 var ContactModel = mongoose.model('contacts', ContactSchema);
+var IncidentModel = mongoose.model('incidents', IncidentSchema);
 
 
 
 app.post('/sendsos', async (req, res) => {
+    
     console.log(req.body);
     let user_email = req.body.email;
+    let location = req.body.location;
+    let timestamp = req.body.timestamp;
     if(!user_email){
         res.status(404).send("")
     }
     let user = await UserModel.findOne({email: user_email});
     let userid = user._id;
+    let username = user.username;
+    let Incident = {
+        user_id: userid,
+        location: location,
+        active: true,
+        timestamp: timestamp
+    }
+    await IncidentModel.create(Incident);
     let orgid = user.org;
     // console.log(orgid)
 
@@ -111,32 +135,38 @@ app.post('/sendsos', async (req, res) => {
 
     const client = require('twilio')(accountSid, authToken);
 
-    client.messages 
-    .create({body: 'Hi there', from: '+14793832726', to: '+15408248711'})
-    .then(message => console.log(message.sid));
+    let maps_url = `https://maps.google.com/?q=${location.latitude},${location.longitude}`
 
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'youremail@gmail.com',
-          pass: 'yourpassword'
-        }
-    });
+    let sms_body = `\n Emergency alert! Looks like ${username} is in danger. They are last located at this location: ${maps_url}. Please take action to help them immediately. Please note you are receiving this message as you are added as an emergency contact by ${username}.`
+
+    console.log(sms_body)
+
+    // client.messages 
+    // .create({body: sms_body, from: '+14793832726', to: '+15408248711'})
+    // .then(message => console.log(message.sid));
+
+    // var transporter = nodemailer.createTransport({
+    //     service: 'gmail',
+    //     auth: {
+    //       user: 'youremail@gmail.com',
+    //       pass: 'yourpassword'
+    //     }
+    // });
       
-    var mailOptions = {
-        from: 'youremail@gmail.com',
-        to: 'myfriend@yahoo.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-    };
+    // var mailOptions = {
+    //     from: 'youremail@gmail.com',
+    //     to: 'myfriend@yahoo.com',
+    //     subject: 'Sending Email using Node.js',
+    //     text: 'That was easy!'
+    // };
       
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        }else {
-          console.log('Email sent: ' + info.response);
-        }
-    });
+    // transporter.sendMail(mailOptions, function(error, info){
+    //     if (error) {
+    //       console.log(error);
+    //     }else {
+    //       console.log('Email sent: ' + info.response);
+    //     }
+    // });
 
     res.status(200).send({});
 });
