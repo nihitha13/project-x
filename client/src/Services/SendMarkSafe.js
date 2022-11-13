@@ -1,5 +1,5 @@
-export const sendSOS = async (email, location, timestamp) => {
-    let response = await fetch('http://localhost:4000/sendsos/', {
+export const SendMarkSafe = async (incident_id, email, type) => {
+    let response = await fetch('http://localhost:4000/marksafe/', {
         method: 'POST',
         headers: {
             'Content-Type': 'Application/json',
@@ -7,9 +7,9 @@ export const sendSOS = async (email, location, timestamp) => {
             
         },
         body:JSON.stringify({
-            email,
-            location,
-            timestamp
+            incident_id: incident_id,
+            email: email,
+            type: type
         })
     });
 

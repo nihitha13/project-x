@@ -21,6 +21,12 @@ app.use(function (req, res, next) {
 const dotenv = require('dotenv');
 dotenv.config();
 
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioClient = require('twilio')(accountSid, authToken);
+
+
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://projectx:1234@projectx.n53lkfe.mongodb.net/?retryWrites=true&w=majority";
 
@@ -75,6 +81,7 @@ var IncidentSchema = new Schema({
         longitude: { type: String }
     },
     timestamp: {type: Date},
+    type: {type: String},
     audio_id : { type: SchemaTypes.ObjectId, ref: "audios" },
 });
 
@@ -103,9 +110,10 @@ app.post('/sendsos', async (req, res) => {
         user_id: userid,
         location: location,
         active: true,
-        timestamp: timestamp
+        timestamp: timestamp,
+        type: "Other"
     }
-    await IncidentModel.create(Incident);
+    Incident = await IncidentModel.create(Incident);
     let orgid = user.org;
     // console.log(orgid)
 
@@ -127,13 +135,10 @@ app.post('/sendsos', async (req, res) => {
     console.log(contact_emails)
     console.log(contact_phones)
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-
+   
     console.log(accountSid)
     console.log(authToken)
 
-    const client = require('twilio')(accountSid, authToken);
 
     let maps_url = `https://maps.google.com/?q=${location.latitude},${location.longitude}`
 
@@ -141,7 +146,7 @@ app.post('/sendsos', async (req, res) => {
 
     console.log(sms_body)
 
-    // client.messages 
+    // twilioClient.messages 
     // .create({body: sms_body, from: '+14793832726', to: '+15408248711'})
     // .then(message => console.log(message.sid));
 
@@ -168,8 +173,36 @@ app.post('/sendsos', async (req, res) => {
     //     }
     // });
 
-    res.status(200).send({});
+    console.log(Incident._id)
+
+    res.status(200).send({incident_id: Incident._id});
 });
+
+app.post('/marksafe', async (req, res) => {
+    console.log(req.body)
+
+    let incident_id = req.body.incident_id;
+    let email = req.body.email;
+    let user = await UserModel.findOne({email: email});
+    let userid = user._id;
+    let username = user.username;
+
+    const filter = { _id: incident_id};
+    const update = { active: false };
+
+    let incident = await IncidentModel.findOneAndUpdate(filter, update);
+
+    let sms_body = `\n Emergency alert! Looks like ${username} marked themself as SAFE now. Contact them to assess the situation. Please note you are receiving this message as you are added as an emergency contact by ${username}.`
+
+    console.log(sms_body)
+
+    res.status(200).send({})
+
+    // twilioClient.messages 
+    // .create({body: sms_body, from: '+14793832726', to: '+15408248711'})
+    // .then(message => console.log(message.sid));
+
+})
 
 
 // var user = new UserModel({

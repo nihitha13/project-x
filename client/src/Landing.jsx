@@ -7,13 +7,17 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import InsightsIcon from "@mui/icons-material/Insights";
 import "./Landing.css";
 import { sendSOS } from "./Services/SendSOS";
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import MarkSafeModal from "./components/MarkSafeModal";
 
 export const LandingPage = () => {
   const [sos, setSos] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [incident_id, setIncident] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const handleSOS = async (e) => {
     await navigator.geolocation.getCurrentPosition(
@@ -25,12 +29,13 @@ export const LandingPage = () => {
       (err) => console.log(err)
     );
 
-    const resp = await sendSOS(
-      "abc@vt.edu",
-      { latitude, longitude },
-      Date.now()
-    );
-    setSos(resp);
+    let resp = await sendSOS("abc@vt.edu", { latitude, longitude }, Date.now());
+
+    console.log(resp);
+
+    setIncident(resp.incident_id);
+
+    setSos(true);
   };
 
   return (
@@ -51,15 +56,26 @@ export const LandingPage = () => {
           </Link>
         </section>
         <section className="lp-sos">
-          <Button variant="danger" onClick={(e) => handleSOS()} size="xlg">
+          <Button
+            variant="danger"
+            disabled={sos}
+            onClick={(e) => handleSOS()}
+            size="xlg"
+          >
             SOS{" "}
           </Button>
         </section>
         <section className="lp-sec">
-          <Button variant="success" disabled={true} size="xlg">
+          <Button
+            variant="success"
+            disabled={!sos}
+            onClick={(e) => setOpenModal(true)}
+            size="xlg"
+          >
             Mark Safe{" "}
           </Button>
         </section>
+        {openModal && <MarkSafeModal incident_id={incident_id} />}
       </div>
     </Container>
   );
