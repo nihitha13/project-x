@@ -3,6 +3,7 @@ const express = require('express');
 var bodyParser = require('body-parser');
 const app = express();
 app.use(express.static('public'));
+var nodemailer = require('nodemailer');
 
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -114,9 +115,28 @@ app.post('/sendsos', async (req, res) => {
     .create({body: 'Hi there', from: '+14793832726', to: '+15408248711'})
     .then(message => console.log(message.sid));
 
-//     client.validationRequests
-//   .create({friendlyName: 'My Home Phone Number', phoneNumber: '+15408248709'})
-//   .then(validation_request => console.log(validation_request.friendlyName));
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'youremail@gmail.com',
+          pass: 'yourpassword'
+        }
+    });
+      
+    var mailOptions = {
+        from: 'youremail@gmail.com',
+        to: 'myfriend@yahoo.com',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+    };
+      
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        }else {
+          console.log('Email sent: ' + info.response);
+        }
+    });
 
     res.status(200).send({});
 });
