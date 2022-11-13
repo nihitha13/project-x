@@ -11,7 +11,19 @@ export const MapView = () => {
      
     const [incidents, setIncidents] = useState([]);
 
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
+
     const getIncidents = async () => {
+      await navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position);
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (err) => console.log(err)
+      );
+
       let response = await fetch('http://localhost:4000/incidents/', {
         method: 'GET',
         headers: {
@@ -34,7 +46,9 @@ export const MapView = () => {
 
     return (
     <div>
-    <MapContainer center={[37.227746, -80.421960]} zoom={10} scrollWheelZoom={false}>
+      { latitude &&
+      
+    <MapContainer center={[latitude, longitude]} zoom={10} scrollWheelZoom={false}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -57,5 +71,6 @@ export const MapView = () => {
            </Marker>
          ))}
     </MapContainer>
+}
   </div>);
 }
