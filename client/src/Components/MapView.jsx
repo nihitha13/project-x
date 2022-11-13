@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, Marker, Popup, Tooltip } from 'react-leaflet'
 import { useMapEvents } from 'react-leaflet/hooks';
 export const MapView = () => {
 
@@ -48,7 +48,7 @@ export const MapView = () => {
     <div>
       { latitude &&
       
-    <MapContainer center={[latitude, longitude]} zoom={10} scrollWheelZoom={false}>
+    <MapContainer center={[latitude, longitude]} zoom={14} scrollWheelZoom={false}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -60,14 +60,9 @@ export const MapView = () => {
                incident.location.latitude,
                incident.location.longitude
              ]}
-            onMouseOver={(e) => {
-              e.target.openPopup();
-            }}
-            onMouseOut={(e) => {
-              e.target.closePopup();
-            }}
             >
-             <Popup>{incident.type}</Popup>
+             <Popup>Incident Type: {incident.type} <br/> Date: {incident.timestamp.substring(0,10)}</Popup>
+             <Tooltip>Incident Type: {incident.type} <br/>Date: {incident.timestamp.substring(0,10)}</Tooltip>
            </Marker>
          ))}
     </MapContainer>
