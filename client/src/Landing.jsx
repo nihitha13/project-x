@@ -13,6 +13,8 @@ import { sendSOS } from "./Services/SendSOS";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import MarkSafeModal from "./Components/MarkSafeModal";
+import { OrgPage } from "./Components/OrgPage";
+import PublicIcon from "@mui/icons-material/Public";
 
 export const LandingPage = () => {
   const [sos, setSos] = useState(false);
@@ -22,15 +24,17 @@ export const LandingPage = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const handleSOS = async (e) => {
-    await navigator.geolocation.getCurrentPosition(
-      (position) => {
+    let x = await navigator.geolocation.getCurrentPosition(
+      async (position) => {
         console.log(position);
         setLatitude(position.coords.latitude);
         setLongitude(position.coords.longitude);
+        // await sendSOS("abc@vt.edu", { latitude, longitude }, Date.now());
       },
       (err) => console.log(err)
     );
 
+    console.log(latitude, longitude);
     let resp = await sendSOS("abc@vt.edu", { latitude, longitude }, Date.now());
 
     console.log(resp);
@@ -61,9 +65,15 @@ export const LandingPage = () => {
               <QueryStatsIcon></QueryStatsIcon>
             </IconButton>
           </Link>
+          <Link to="/org/">
+            <IconButton size="lg">
+              <PublicIcon></PublicIcon>
+            </IconButton>
+          </Link>
         </section>
         <section className="lp-sos">
           <Button
+            style={{ borderRadius: "50%" }}
             variant="danger"
             disabled={sos}
             onClick={(e) => handleSOS()}
@@ -73,14 +83,16 @@ export const LandingPage = () => {
           </Button>
         </section>
         <section className="lp-sec">
-          <Button
-            variant="success"
-            disabled={!sos}
-            onClick={(e) => setOpenModal(true)}
-            size="xlg"
-          >
-            Mark Safe{" "}
-          </Button>
+          {sos && (
+            <Button
+              variant="success"
+              // disabled={!sos}
+              onClick={(e) => setOpenModal(true)}
+              size="xlg"
+            >
+              Mark Safe{" "}
+            </Button>
+          )}
         </section>
         {openModal && (
           <MarkSafeModal incident_id={incident_id} setSos={setSos} />

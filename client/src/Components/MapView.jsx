@@ -72,10 +72,10 @@ export const MapView = () => {
                   Incident Type: {incident.type} <br /> Date:{" "}
                   {incident.timestamp.substring(0, 10)}
                 </Popup>
-                <Tooltip>
+                {/* <Tooltip>
                   Incident Type: {incident.type} <br />
                   Date: {incident.timestamp.substring(0, 10)}
-                </Tooltip>
+                </Tooltip> */}
               </Marker>
             ))}
         </MapContainer>

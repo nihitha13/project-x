@@ -2,6 +2,7 @@ import { LandingPage } from "./Landing";
 import { AccountDetails } from "./Components/AccountDetails";
 import { MapView } from "./Components/MapView";
 import Stats from "./Components/Stats";
+import { OrgPage } from "./Components/OrgPage";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
@@ -18,6 +19,7 @@ function App() {
           ></Route>
           <Route path="/map/" element={<MapView></MapView>}></Route>
           <Route path="/stats/" element={<Stats></Stats>}></Route>
+          <Route path="/org" element={<OrgPage></OrgPage>}></Route>
           <Route path="/" element={<LandingPage></LandingPage>}></Route>
         </Routes>
       </Router>

@@ -105,9 +105,13 @@ app.post("/sendsos", async (req, res) => {
   let user = await UserModel.findOne({ email: user_email });
   let userid = user._id;
   let username = user.username;
+  let loc = {
+    latitude: "37.228289",
+    longitude: "-80.417714",
+  };
   let Incident = {
     user_id: userid,
-    location: location,
+    location: loc,
     active: true,
     timestamp: timestamp,
     type: "Other",
@@ -137,15 +141,15 @@ app.post("/sendsos", async (req, res) => {
   console.log(accountSid);
   console.log(authToken);
 
-  let maps_url = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+  let maps_url = "https://maps.google.com/?q=37.228289,-80.417714";
 
   let sms_body = `\n Emergency alert! Looks like ${username} is in danger. They are last located at this location: ${maps_url}. Please take action to help them immediately. Please note you are receiving this message as you are added as an emergency contact by ${username}.`;
 
   console.log(sms_body);
 
-  // twilioClient.messages
-  // .create({body: sms_body, from: '+14793832726', to: '+15408248711'})
-  // .then(message => console.log(message.sid));
+  twilioClient.messages
+    .create({ body: sms_body, from: "+14793832726", to: "+15408248711" })
+    .then((message) => console.log(message.sid));
 
   // var transporter = nodemailer.createTransport({
   //     service: 'gmail',
@@ -194,11 +198,11 @@ app.post("/marksafe", async (req, res) => {
 
   console.log(sms_body);
 
-  res.status(200).send({});
+  twilioClient.messages
+    .create({ body: sms_body, from: "+14793832726", to: "+15408248711" })
+    .then((message) => console.log(message.sid));
 
-  // twilioClient.messages
-  // .create({body: sms_body, from: '+14793832726', to: '+15408248711'})
-  // .then(message => console.log(message.sid));
+  res.status(200).send({});
 });
 
 app.get("/incidents", async (req, res) => {
@@ -247,6 +251,19 @@ app.get("/incidents", async (req, res) => {
   }
 
   res.send(JSON.stringify(incidents_data));
+});
+
+app.get("/sendalerts", async (req, res) => {
+  let maps_url = "https://maps.google.com/?q=37.228289,-80.417714";
+  let sms_body = `\n Emergency alert! An Incident has been reported in our organization near ${maps_url}. Please stay away from this area until the area is marked as Safe.`;
+
+  console.log(sms_body);
+
+  twilioClient.messages
+    .create({ body: sms_body, from: "+14793832726", to: "+15408248711" })
+    .then((message) => console.log(message.sid));
+
+  res.status(200).send({});
 });
 
 // var user = new UserModel({
